@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -39,7 +40,7 @@ public class PostsFragment extends Fragment {
 
         postRecyclerView = view.findViewById(R.id.postRecyclerView);
         fabAddPost = view.findViewById(R.id.fabAddPost);
-        etSearch = view.findViewById(R.id.etSearch); // Add this in your XML
+        etSearch = view.findViewById(R.id.etSearch);
 
         postRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new PostAdapter(getContext(), filteredList);
@@ -57,7 +58,6 @@ public class PostsFragment extends Fragment {
 
         loadPosts();
 
-        // Filter posts in real-time based on search input
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
@@ -76,11 +76,28 @@ public class PostsFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     postList.clear();
+
+                    // For each post, fetch the user's profile image
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Post post = doc.toObject(Post.class);
+
+                        // Fetch user profile to get profile image
+                        firestore.collection("users")
+                                .document(post.getUserId())
+                                .get()
+                                .addOnSuccessListener(userDoc -> {
+                                    if (userDoc.exists()) {
+                                        UserProfile userProfile = userDoc.toObject(UserProfile.class);
+                                        if (userProfile != null) {
+                                            post.setUserProfileImage(userProfile.getProfileImageUrl());
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                    }
+                                });
+
                         postList.add(post);
                     }
-                    // Initially show all posts
+
                     filteredList.clear();
                     filteredList.addAll(postList);
                     adapter.notifyDataSetChanged();

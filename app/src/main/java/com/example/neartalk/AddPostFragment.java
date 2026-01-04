@@ -174,26 +174,105 @@ public class AddPostFragment extends Fragment {
         if (getContext() == null || getActivity() == null) return;
 
         String uid = auth.getUid();
-        Post post = new Post(
-                null,
-                uid,
-                auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : "",
-                selectedType,
-                etTitle.getText().toString().trim(),
-                etDescription.getText().toString().trim(),
-                etPrice.getText().toString().trim(),
-                new ArrayList<>(uploadedUrls),
-                System.currentTimeMillis()
-        );
+        if (uid == null) {
+            Toast.makeText(getContext(), "User not logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        db.collection("posts")
-                .add(post)
-                .addOnSuccessListener(doc -> {
-                    Toast.makeText(getContext(), "Post Created", Toast.LENGTH_SHORT).show();
-                    getActivity().getSupportFragmentManager().popBackStack();
+        // First, fetch the user's profile to get their name and profile image
+        db.collection("users").document(uid)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        UserProfile userProfile = documentSnapshot.toObject(UserProfile.class);
+
+                        String userName = userProfile != null ? userProfile.getUserName() : "";
+                        String userEmail = auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : "";
+                        String userProfileImage = userProfile != null ? userProfile.getProfileImageUrl() : "";
+
+                        // Use the userName from UserProfile, fallback to email if not available
+                        if (userName.isEmpty()) {
+                            userName = userEmail;
+                        }
+
+                        // Create post with all required parameters including profile image
+                        Post post = new Post(
+                                null,
+                                uid,
+                                userName, // Use actual username from profile
+                                userProfileImage, // Add profile image URL
+                                selectedType,
+                                etTitle.getText().toString().trim(),
+                                etDescription.getText().toString().trim(),
+                                etPrice.getText().toString().trim(),
+                                new ArrayList<>(uploadedUrls),
+                                System.currentTimeMillis()
+                        );
+
+                        // Save to Firestore
+                        db.collection("posts")
+                                .add(post)
+                                .addOnSuccessListener(doc -> {
+                                    Toast.makeText(getContext(), "Post Created", Toast.LENGTH_SHORT).show();
+                                    getActivity().getSupportFragmentManager().popBackStack();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getContext(), "Failed to create post: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    } else {
+                        // User profile doesn't exist, create post with minimal info
+                        String userEmail = auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : "";
+
+                        Post post = new Post(
+                                null,
+                                uid,
+                                userEmail, // Use email as fallback
+                                "", // Empty profile image URL
+                                selectedType,
+                                etTitle.getText().toString().trim(),
+                                etDescription.getText().toString().trim(),
+                                etPrice.getText().toString().trim(),
+                                new ArrayList<>(uploadedUrls),
+                                System.currentTimeMillis()
+                        );
+
+                        db.collection("posts")
+                                .add(post)
+                                .addOnSuccessListener(doc -> {
+                                    Toast.makeText(getContext(), "Post Created", Toast.LENGTH_SHORT).show();
+                                    getActivity().getSupportFragmentManager().popBackStack();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getContext(), "Failed to create post: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Failed to create post", Toast.LENGTH_SHORT).show();
+                    // If we can't fetch user profile, create post with basic info
+                    String userEmail = auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : "";
+
+                    Post post = new Post(
+                            null,
+                            uid,
+                            userEmail, // Use email as fallback
+                            "", // Empty profile image URL
+                            selectedType,
+                            etTitle.getText().toString().trim(),
+                            etDescription.getText().toString().trim(),
+                            etPrice.getText().toString().trim(),
+                            new ArrayList<>(uploadedUrls),
+                            System.currentTimeMillis()
+                    );
+
+                    db.collection("posts")
+                            .add(post)
+                            .addOnSuccessListener(doc -> {
+                                Toast.makeText(getContext(), "Post Created", Toast.LENGTH_SHORT).show();
+                                getActivity().getSupportFragmentManager().popBackStack();
+                            })
+                            .addOnFailureListener(e2 -> {
+                                Toast.makeText(getContext(), "Failed to create post: " + e2.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
                 });
     }
 }

@@ -1,17 +1,232 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfileFragment"
-    android:padding="16dp">
+    android:background="@drawable/gradient_background"
+    android:fillViewport="true">
 
-    <Button
-        android:id="@+id/btnLogout"
+    <LinearLayout
+        android:id="@+id/viewContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Logout"
-        android:backgroundTint="@color/design_default_color_error"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"/>
-</FrameLayout>
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Profile Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginBottom="24dp">
+
+            <!-- Profile Picture -->
+            <FrameLayout
+                android:layout_width="120dp"
+                android:layout_height="120dp">
+
+                <ImageView
+                    android:id="@+id/imgProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_user"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/circle_white"
+                    android:padding="4dp"/>
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="bottom|end"
+                    android:src="@drawable/ic_camera"
+                    android:padding="8dp"
+                    android:visibility="gone"/>
+
+            </FrameLayout>
+
+            <!-- Change Photo Button (Visible in Edit Mode) -->
+            <Button
+                android:id="@+id/btnChangePhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Change Photo"
+                android:textColor="@color/colorPrimary"
+                android:background="@android:color/transparent"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"/>
+
+            <!-- User Name -->
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="John Doe"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginTop="16dp"/>
+
+            <!-- Edit Name Field (Hidden by default) -->
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your name"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:background="@drawable/input_background"
+                android:padding="12dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <!-- Profile Details Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="20dp"
+            android:elevation="4dp">
+
+            <!-- Email Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:textSize="12sp"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="user@example.com"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Neighbourhood Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Neighbourhood"
+                android:textSize="12sp"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/tvNeighbourhood"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Downtown District"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Edit Neighbourhood Field -->
+            <EditText
+                android:id="@+id/etNeighbourhood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your neighbourhood"
+                android:textColorHint="@color/black"
+                android:inputType="text"
+                android:maxLines="1"
+                android:background="@drawable/input_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"/>
+
+            <!-- About Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="About Me"
+                android:textSize="12sp"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/tvAbout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tell something about yourself..."
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Edit About Field -->
+            <EditText
+                android:id="@+id/etAbout"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:hint="Tell something about yourself (max 150 words)..."
+                android:inputType="textMultiLine"
+                android:gravity="top"
+                android:background="@drawable/input_background"
+                android:padding="12dp"
+                android:visibility="gone"/>
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp"
+                android:gravity="center">
+
+                <!-- Edit Button (Default) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEdit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Edit Profile"
+                    android:textStyle="bold"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:layout_marginEnd="8dp"/>
+
+                <!-- Save Button (Hidden by default) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSave"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Save"
+                    android:textStyle="bold"
+                    android:backgroundTint="@color/green_500"
+                    android:layout_marginEnd="8dp"
+                    android:visibility="gone"/>
+
+                <!-- Cancel Button (Hidden by default) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Cancel"
+                    android:textStyle="bold"
+                    android:backgroundTint="@color/design_default_color_error"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
+            <!-- Logout Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Logout"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/design_default_color_error"
+                android:textColor="@android:color/white"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,7 +1,6 @@
 package com.example.neartalk;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
+
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostVH> {
 
     private final List<Post> postList;
@@ -43,8 +43,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostVH> {
         holder.tvDesc.setText(post.getDescription());
         holder.tvPrice.setText(post.getPrice().isEmpty() ? "" : "$" + post.getPrice());
         holder.tvStatus.setText(post.getType().toUpperCase());
-        holder.tvPic.setText(post.getUserName().isEmpty() ? "U" :
-                post.getUserName().substring(0,1).toUpperCase());
+
+        // Load profile image instead of showing text initials
+        if (post.getUserProfileImage() != null && !post.getUserProfileImage().isEmpty()) {
+            // Show profile image
+            Glide.with(context)
+                    .load(post.getUserProfileImage())
+                    .circleCrop() // Make it circular
+                    .placeholder(R.drawable.ic_user) // Default placeholder
+                    .into(holder.ivProfile);
+            holder.tvPic.setVisibility(View.GONE); // Hide the text view
+            holder.ivProfile.setVisibility(View.VISIBLE); // Show image view
+        } else {
+            // Fallback to text initials if no profile image
+            holder.tvPic.setText(post.getUserName().isEmpty() ? "U" :
+                    post.getUserName().substring(0,1).toUpperCase());
+            holder.tvPic.setVisibility(View.VISIBLE); // Show text view
+            holder.ivProfile.setVisibility(View.GONE); // Hide image view
+        }
 
         // Horizontal images
         holder.imageRecyclerView.setLayoutManager(
@@ -63,6 +79,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostVH> {
 
     static class PostVH extends RecyclerView.ViewHolder {
         TextView tvName, tvTitle, tvDesc, tvPrice, tvStatus, tvPic;
+        ImageView ivProfile; // Add ImageView for profile picture
         RecyclerView imageRecyclerView;
         Button btnMessage;
 
@@ -74,6 +91,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostVH> {
             tvPrice = itemView.findViewById(R.id.tvPrice);
             tvStatus = itemView.findViewById(R.id.tvStatus);
             tvPic = itemView.findViewById(R.id.tvPic);
+            ivProfile = itemView.findViewById(R.id.ivProfile); // You need to add this in post_list.xml
             imageRecyclerView = itemView.findViewById(R.id.imageRecyclerView);
             btnMessage = itemView.findViewById(R.id.btnMessage);
         }

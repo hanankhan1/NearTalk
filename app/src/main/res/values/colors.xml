@@ -3,11 +3,13 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+
     <!-- Primary Colors -->
     <color name="colorPrimary">#16a34a</color> <!-- Green 600 -->
     <color name="colorPrimaryDark">#15803d</color> <!-- Green 700 -->
     <color name="colorAccent">#1BA698</color> <!-- Teal 600 -->
     <color name="colorBackground">#ffffff</color>
+    <color name="green_500">#4CAF50</color>
 
     <!-- Gradient Colors -->
     <color name="gradient_start">#16a34a</color> <!-- Green 500 -->
