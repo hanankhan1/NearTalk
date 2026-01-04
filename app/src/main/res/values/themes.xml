@@ -1,0 +1,34 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.NearTalk" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary Colors -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryContainer">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/text_primary</item>
+
+        <!-- Secondary Colors -->
+        <item name="colorSecondary">@color/colorAccent</item>
+        <item name="colorSecondaryContainer">@color/colorAccent</item>
+        <item name="colorOnSecondary">@color/text_primary</item>
+
+        <!-- Surface Colors -->
+        <item name="colorSurface">@color/card_background</item>
+        <item name="colorOnSurface">@color/text_dark</item>
+
+        <!-- Button Styles -->
+        <item name="materialButtonStyle">@style/Widget.Material3.Button</item>
+
+        <!-- Disable button tint for custom backgrounds -->
+        <item name="android:buttonStyle">@style/MyButtonStyle</item>
+
+
+
+    </style>
+
+    <style name="Theme.NearTalk" parent="Base.Theme.NearTalk" />
+    <style name="MyButtonStyle" parent="Widget.Material3.Button">
+        <item name="android:backgroundTint">@null</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:background">@null</item>
+    </style>
+</resources>

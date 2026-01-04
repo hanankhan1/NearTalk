@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true"
+    android:background="@drawable/gradient_background"
+    tools:context=".Profile"
+    android:id="@+id/profile_scroll">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_medium">
+
+        <!-- TITLE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Complete Your Profile"
+            android:textSize="@dimen/text_xlarge"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/spacing_large"/>
+
+        <!-- PROFILE IMAGE -->
+        <ImageView
+            android:id="@+id/imgProfile"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:src="@drawable/ic_user"
+            android:background="@drawable/circle_white"
+            android:layout_gravity="center"
+            android:padding="8dp"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true"/>
+
+        <TextView
+            android:id="@+id/btnAddPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Profile Picture"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:clickable="true"/>
+
+        <!-- CARD -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_background"
+            android:padding="@dimen/spacing_large"
+            android:elevation="@dimen/shadow_elevation_large"
+            android:orientation="vertical">
+
+            <!-- EMAIL -->
+            <TextView
+                android:text="Email"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/text_dark"/>
+
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_height"
+                android:enabled="false"
+                android:textColor="@color/black"
+                android:background="@drawable/input_background"
+                android:padding="12dp"
+                android:layout_marginBottom="@dimen/spacing_medium"/>
+
+            <!-- NAME -->
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Name"
+                android:textStyle="bold"
+                android:textColor="@color/text_dark"/>
+
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_height"
+                android:hint="Enter your full name"
+                android:textColor="@color/black"
+                android:background="@drawable/input_background"
+                android:padding="12dp"
+                android:layout_marginBottom="@dimen/spacing_medium"/>
+
+            <!-- NEIGHBOURHOOD -->
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Neighbourhood"
+                android:textStyle="bold"
+                android:textColor="@color/text_dark"/>
+
+            <EditText
+                android:id="@+id/etNeighbourhood"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_height"
+                android:hint="e.g. Model Town"
+                android:textColor="@color/black"
+                android:background="@drawable/input_background"
+                android:padding="12dp"
+                android:layout_marginBottom="@dimen/spacing_medium"/>
+
+            <!-- ABOUT -->
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="About You (max 150 words)"
+                android:textStyle="bold"
+                android:textColor="@color/text_dark"/>
+
+            <EditText
+                android:id="@+id/etAbout"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:hint="Tell something about yourself..."
+                android:background="@drawable/input_background"
+                android:padding="12dp"
+                android:gravity="top"
+                android:textColor="@color/black"
+                android:inputType="textMultiLine"/>
+
+            <!-- SAVE -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveProfile"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:text="Save and Continue"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:background="@drawable/button_gradient"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

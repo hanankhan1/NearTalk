@@ -1,0 +1,114 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/custom_list_post"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="14dp"
+    android:layout_margin="10dp"
+    android:background="@drawable/card_background"
+    >
+
+    <!-- USER INFO ROW -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvPic"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="S"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:background="@drawable/ic_logo_background"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="10dp">
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sarah Johnson"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/tvLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Downtown District • 2h ago"
+                android:textSize="14sp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FOR SALE"
+            android:textColor="@android:color/holo_green_dark"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- POST TITLE -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mountain Bike for Sale"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:layout_marginTop="8dp"/>
+
+    <!-- POST DESCRIPTION -->
+    <TextView
+        android:id="@+id/tvDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selling my mountain bike in excellent condition..."
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:layout_marginTop="4dp"/>
+
+    <!-- PRICE -->
+    <TextView
+        android:id="@+id/tvPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$250"
+        android:textColor="@android:color/holo_green_dark"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="6dp"/>
+
+    <!-- HORIZONTAL IMAGE RECYCLER VIEW -->
+
+    <!-- MESSAGE BUTTON -->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/imageRecyclerView"
+        android:layout_width="400dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="8dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:scrollbars="horizontal" />
+
+    <Button
+        android:id="@+id/btnMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Message Seller"
+        android:background="@drawable/button_gradient"
+        android:layout_marginTop="8dp"/>
+</LinearLayout>

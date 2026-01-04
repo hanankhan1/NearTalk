@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">NearTalk</string>
+    <string name="enter_phone_title">Enter your phone number to continue</string>
+    <string name="verify_identity_title">Verify your identity</string>
+    <string name="phone_number_hint">Phone Number</string>
+    <string name="phone_placeholder">123 456 7890</string>
+    <string name="otp_info">We\'ll send you a one-time password to verify your identity. No password needed!</string>
+    <string name="send_otp">Send OTP →</string>
+    <string name="change_phone">← Change phone number</string>
+    <string name="enter_code_sent">Enter the code sent to</string>
+    <string name="verification_code">Verification Code</string>
+    <string name="resend_code">Resend Code</string>
+    <string name="verify_login">Verify &amp; Login</string>
+    <string name="secure_messaging">Secure messaging powered by end-to-end encryption</string>
+    <string name="search_country">Search country...</string>
+    <string name="no_countries_found">No countries found</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

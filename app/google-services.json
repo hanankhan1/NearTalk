@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "884558116880",
+    "project_id": "neartalk-4ce74",
+    "storage_bucket": "neartalk-4ce74.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:884558116880:android:91a9384ec5454528d03295",
+        "android_client_info": {
+          "package_name": "com.example.neartalk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB210OqL8MYyYW4jwQp_zObco3gXackGDo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

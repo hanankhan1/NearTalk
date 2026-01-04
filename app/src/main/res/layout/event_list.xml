@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#E0E0E0">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="14dp"
+        android:orientation="vertical">
+
+        <!-- Title + Status -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvEventTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Community Yard Sale"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="#212121"/>
+
+            <TextView
+                android:id="@+id/tvEventStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Going"
+                android:textSize="12sp"
+                android:textColor="@color/colorPrimary"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/bg_status_chip"/>
+        </LinearLayout>
+
+        <!-- Category -->
+        <TextView
+            android:id="@+id/tvEventCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Community"
+            android:textSize="12sp"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/bg_category_chip"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3dp"/>
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/tvEventDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Join us for a neighborhood-wide yard sale!"
+            android:textSize="14sp"
+            android:textColor="#616161"/>
+
+        <!-- Date -->
+        <TextView
+            android:id="@+id/tvEventDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="📅 Dec 20, 2025 · 9:00 AM"
+            android:textSize="13sp"
+            android:textColor="#444"/>
+
+        <!-- Location -->
+        <TextView
+            android:id="@+id/tvEventLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📍 Community Center Parking"
+            android:textSize="13sp"
+            android:textColor="#444"/>
+
+        <!-- Attendees -->
+        <TextView
+            android:id="@+id/tvEventAttendees"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="👥 45 attending"
+            android:textSize="13sp"
+            android:textColor="#444"/>
+
+        <!-- Organizer -->
+        <TextView
+            android:id="@+id/tvEventOrganizer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Organized by Lisa Anderson"
+            android:textSize="12sp"
+            android:textColor="#757575"/>
+
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
