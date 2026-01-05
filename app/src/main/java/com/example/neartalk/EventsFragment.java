@@ -32,8 +32,8 @@ public class EventsFragment extends Fragment {
     private TextInputEditText etSearch;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_events, container, false);
 
@@ -42,6 +42,7 @@ public class EventsFragment extends Fragment {
         etSearch = view.findViewById(R.id.etSearch);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         eventList = new ArrayList<>();
         filteredList = new ArrayList<>();
         adapter = new EventAdapter(filteredList);
@@ -53,7 +54,7 @@ public class EventsFragment extends Fragment {
 
         fabAddEvent.setOnClickListener(v -> openAddEventFragment());
 
-        // Real-time search by category
+        // Search by category
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -62,12 +63,16 @@ public class EventsFragment extends Fragment {
             @Override public void afterTextChanged(Editable s) {}
         });
 
-        adapter.setOnItemClickListener(event -> requireActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, EventDetailsFragment.newInstance(event.getId()))
-                .addToBackStack(null)
-                .commit()
-        );
+        // Handle event click (details)
+        adapter.setOnEventActionListener(new EventAdapter.OnEventActionListener() {
+            @Override
+            public void onEdit(Event event) {
+            }
+
+            @Override
+            public void onDelete(Event event, int position) {
+            }
+        });
 
         return view;
     }
@@ -92,18 +97,20 @@ public class EventsFragment extends Fragment {
                         Event event = doc.toObject(Event.class);
                         if (event != null) {
                             event.setId(doc.getId());
+
                             Long attendees = doc.getLong("attendees");
                             event.setAttendees(attendees != null ? attendees : 0);
 
                             // Fetch organizer name
                             String userId = event.getUserId();
-                            if (userId != null && !userId.isEmpty()) {
-                                db.collection("users").document(userId)
+                            if (userId != null) {
+                                db.collection("users")
+                                        .document(userId)
                                         .get()
                                         .addOnSuccessListener(userDoc -> {
                                             if (userDoc.exists()) {
-                                                String userName = userDoc.getString("userName");
-                                                event.setUserName(userName != null ? userName : "User");
+                                                String name = userDoc.getString("userName");
+                                                event.setUserName(name != null ? name : "User");
                                                 adapter.notifyDataSetChanged();
                                             }
                                         });
@@ -113,7 +120,6 @@ public class EventsFragment extends Fragment {
                         }
                     }
 
-                    // Initially show all events
                     filteredList.clear();
                     filteredList.addAll(eventList);
                     adapter.notifyDataSetChanged();
@@ -122,6 +128,7 @@ public class EventsFragment extends Fragment {
 
     private void filterEventsByCategory(String category) {
         filteredList.clear();
+
         if (category.isEmpty()) {
             filteredList.addAll(eventList);
         } else {

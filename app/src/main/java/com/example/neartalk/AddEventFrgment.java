@@ -26,6 +26,8 @@ public class AddEventFrgment extends Fragment {
     private Button btnCreateEvent;
     private String selectedCategory = "Social";
     private FirebaseFirestore db;
+    private Event editingEvent;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,6 +57,27 @@ public class AddEventFrgment extends Fragment {
         btnWorkshops.setOnClickListener(v -> selectedCategory = "Workshops");
 
         btnCreateEvent.setOnClickListener(v -> createEvent());
+        if (getArguments() != null) {
+            editingEvent = (Event) getArguments().getSerializable("event");
+
+            if (editingEvent != null) {
+                etTitle.setText(editingEvent.getTitle());
+                etDescription.setText(editingEvent.getDescription());
+                etDate.setText(editingEvent.getDate());
+                etTime.setText(editingEvent.getTime());
+                etLocation.setText(editingEvent.getLocation());
+                btnCreateEvent.setText("Update Event");
+            }
+        }
+
+        btnCreateEvent.setOnClickListener(v -> {
+            if (editingEvent == null) {
+                createEvent();
+            } else {
+                updateEvent();
+            }
+        });
+
 
         return view;
     }
@@ -137,4 +160,19 @@ public class AddEventFrgment extends Fragment {
                         Toast.makeText(getContext(), "Failed to get user info: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                 );
     }
+    private void updateEvent() {
+        db.collection("events").document(editingEvent.getId())
+                .update(
+                        "title", etTitle.getText().toString(),
+                        "description", etDescription.getText().toString(),
+                        "date", etDate.getText().toString(),
+                        "time", etTime.getText().toString(),
+                        "location", etLocation.getText().toString()
+                )
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(getContext(), "Event updated", Toast.LENGTH_SHORT).show();
+                    requireActivity().getSupportFragmentManager().popBackStack();
+                });
+    }
+
 }

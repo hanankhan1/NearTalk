@@ -1,6 +1,8 @@
 package com.example.neartalk;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -13,13 +15,14 @@ import java.util.List;
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
     private final List<Event> eventList;
-    private OnItemClickListener listener;
+    private OnEventActionListener listener;
 
-    public interface OnItemClickListener {
-        void onItemClick(Event event);
+    public interface OnEventActionListener {
+        void onEdit(Event event);
+        void onDelete(Event event, int position);
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
+    public void setOnEventActionListener(OnEventActionListener listener) {
         this.listener = listener;
     }
 
@@ -44,14 +47,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.tvDescription.setText(event.getDescription());
         holder.tvDate.setText(event.getDate() + " at " + event.getTime());
         holder.tvLocation.setText(event.getLocation());
-        holder.tvStatus.setText("Going"); // can be dynamic later
+        holder.tvStatus.setText("Going");
         holder.tvAttendees.setText(event.getAttendees() + " attending");
 
-        // Show userName if available, fallback to "User"
-        String organizerName = event.getUserName() != null && !event.getUserName().isEmpty()
+        String organizer = event.getUserName() != null && !event.getUserName().isEmpty()
                 ? event.getUserName()
                 : "User";
-        holder.tvOrganizer.setText("Organized by " + organizerName);
+        holder.tvOrganizer.setText("Organized by " + organizer);
     }
 
     @Override
@@ -59,12 +61,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         return eventList.size();
     }
 
-    class EventViewHolder extends RecyclerView.ViewHolder {
+    class EventViewHolder extends RecyclerView.ViewHolder
+            implements View.OnCreateContextMenuListener {
 
         TextView tvTitle, tvStatus, tvCategory, tvDescription,
                 tvDate, tvLocation, tvAttendees, tvOrganizer;
 
-        public EventViewHolder(@NonNull View itemView) {
+        EventViewHolder(@NonNull View itemView) {
             super(itemView);
 
             tvTitle = itemView.findViewById(R.id.tvEventTitle);
@@ -76,13 +79,34 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             tvAttendees = itemView.findViewById(R.id.tvEventAttendees);
             tvOrganizer = itemView.findViewById(R.id.tvEventOrganizer);
 
-            // Item click
-            itemView.setOnClickListener(v -> {
-                int pos = getAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION && listener != null) {
-                    listener.onItemClick(eventList.get(pos));
-                }
-            });
+            itemView.setOnCreateContextMenuListener(this);
         }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v,
+                                        ContextMenu.ContextMenuInfo menuInfo) {
+
+            menu.setHeaderTitle("Event Options");
+
+            MenuItem edit = menu.add(0, 0, getAdapterPosition(), "Edit");
+            MenuItem delete = menu.add(0, 1, getAdapterPosition(), "Delete");
+
+            edit.setOnMenuItemClickListener(menuClickListener);
+            delete.setOnMenuItemClickListener(menuClickListener);
+        }
+
+        private final MenuItem.OnMenuItemClickListener menuClickListener = item -> {
+            int position = item.getOrder();
+            Event event = eventList.get(position);
+
+            if (listener == null) return false;
+
+            if (item.getItemId() == 0) {
+                listener.onEdit(event);
+            } else {
+                listener.onDelete(event, position);
+            }
+            return true;
+        };
     }
 }

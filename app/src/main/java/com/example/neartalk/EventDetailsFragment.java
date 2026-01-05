@@ -130,36 +130,40 @@ public class EventDetailsFragment extends Fragment {
 
     private void joinEvent() {
         if (eventId == null) return;
+
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Toast.makeText(getContext(), "Please login first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DocumentReference docRef = db.collection("events").document(eventId);
 
         db.runTransaction(transaction -> {
-            var snapshot = transaction.get(docRef);
+            DocumentSnapshot snapshot = transaction.get(docRef);
+
             List<String> attendeesList = (List<String>) snapshot.get("attendeesList");
             if (attendeesList == null) attendeesList = new ArrayList<>();
 
             if (attendeesList.contains(currentUserId)) {
-                try {
-                    throw new Exception("Already joined");
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                return "ALREADY_JOINED";
             }
 
             attendeesList.add(currentUserId);
             transaction.update(docRef, "attendeesList", attendeesList);
             transaction.update(docRef, "attendees", attendeesList.size());
 
-            return null;
-        }).addOnSuccessListener(aVoid -> {
-            Toast.makeText(getContext(), "You joined the event!", Toast.LENGTH_SHORT).show();
-            loadEventDetails(); // refresh attendees
-        }).addOnFailureListener(e -> {
-            if ("Already joined".equals(e.getMessage())) {
+            return "JOINED";
+        }).addOnSuccessListener(result -> {
+            if ("ALREADY_JOINED".equals(result)) {
                 Toast.makeText(getContext(), "You already joined this event!", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), "Failed to join event.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "You joined the event!", Toast.LENGTH_SHORT).show();
+                loadEventDetails();
             }
-        });
+        }).addOnFailureListener(e ->
+                Toast.makeText(getContext(), "Failed to join event.", Toast.LENGTH_SHORT).show()
+        );
     }
+
 }

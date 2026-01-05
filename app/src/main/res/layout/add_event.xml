@@ -222,7 +222,7 @@
                 app:cardElevation="2dp">
 
                 <TextView
-                    android:padding="12dp"
+                    android:padding="8dp"
                     android:text="🤖 AI Reminders: Attendees will receive smart notifications before the event"
                     android:textSize="14sp"
                     android:layout_width="match_parent"
@@ -236,6 +236,7 @@
                 android:textColor="@android:color/white"
                 android:background="@drawable/button_gradient"
                 android:textStyle="bold"
+                android:layout_marginBottom="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

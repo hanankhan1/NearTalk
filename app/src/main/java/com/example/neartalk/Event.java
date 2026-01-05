@@ -3,9 +3,9 @@ package com.example.neartalk;
 import java.io.Serializable;
 
 public class Event implements Serializable {
-    private String id; // Firestore document ID
-    private String userId; // Firebase UID of creator
-    private String userName; // Added user name
+    private String id;
+    private String userId;
+    private String userName;
     private String category;
     private String title;
     private String description;
@@ -13,12 +13,12 @@ public class Event implements Serializable {
     private String time;
     private String location;
     private long timestamp;
-    private long attendees; // number of attendees
+    private long attendees;
 
-    // No-argument constructor for Firebase
+
     public Event() {}
 
-    // Full constructor
+
     public Event(String id, String userId, String userName, String category, String title, String description,
                  String date, String time, String location, long timestamp, long attendees) {
         this.id = id;
