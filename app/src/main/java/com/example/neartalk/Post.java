@@ -62,4 +62,8 @@ public class Post {
     public void setUserProfileImage(String userProfileImage) {
         this.userProfileImage = userProfileImage;
     }
+    // 🔥 REQUIRED FOR DELETE
+    public void setPostId(String postId) {
+        this.postId = postId;
+    }
 }
