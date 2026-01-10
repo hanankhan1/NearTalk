@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.neartalk">
+
     <!-- Required permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -16,27 +17,37 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NearTalk"
         tools:targetApi="31">
+
+        <!-- SPLASH SCREEN (LAUNCHER) -->
         <activity
-            android:name=".FullscreenImageActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Profile"
-            android:exported="false" />
-        <activity
-            android:name=".LoginActivity"
+            android:name=".activity_splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- LOGIN -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+
+        <!-- SIGN UP -->
         <activity
             android:name=".SignUp"
-            android:exported="false" /> <!-- Dashboard Activity -->
+            android:exported="false" />
+
+        <!-- DASHBOARD -->
         <activity
             android:name=".DashBoard"
             android:exported="false" />
+
+        <!-- PROFILE -->
+        <activity
+            android:name=".Profile"
+            android:exported="false" />
+
     </application>
 
 </manifest>
