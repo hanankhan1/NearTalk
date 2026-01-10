@@ -6,10 +6,13 @@
     android:layout_height="match_parent"
     android:background="@color/colorBackground">
 
+    <!-- Scrollable content -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -17,11 +20,13 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- ====== Profile Header ====== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:gravity="center_vertical">
 
                 <!-- Profile Picture -->
                 <ImageView
@@ -29,11 +34,12 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_marginEnd="20dp"
-                    android:background="@drawable/circle_white"
+                    android:src="@drawable/ic_user"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_user" />
+                    android:background="@drawable/circle_white"
+                    android:contentDescription="Profile Picture" />
 
-                <!-- Right Side -->
+                <!-- User Info -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -50,7 +56,7 @@
                         android:textColor="@color/text_dark"
                         android:layout_marginBottom="8dp" />
 
-                    <!-- Stats -->
+                    <!-- Stats: Posts / Events -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -107,12 +113,13 @@
 
                     </LinearLayout>
 
-                    <!-- Buttons -->
+                    <!-- Action Buttons -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:layout_marginTop="4dp">
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnEditProfile"
@@ -120,7 +127,8 @@
                             android:layout_height="48dp"
                             android:layout_weight="1"
                             android:layout_marginEnd="4dp"
-                            android:text="Edit Profile"
+                            android:text="Edit"
+                            android:textSize="15sp"
                             style="@style/Widget.Material3.Button.OutlinedButton"
                             app:strokeColor="@color/colorPrimary"
                             app:strokeWidth="1dp" />
@@ -132,23 +140,24 @@
                             android:layout_weight="1"
                             android:layout_marginStart="4dp"
                             android:text="Logout"
+                            android:textSize="15sp"
                             style="@style/Widget.Material3.Button.OutlinedButton"
                             app:strokeColor="@color/colorAccent"
                             app:strokeWidth="1dp" />
                     </LinearLayout>
-
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- ================= BIO SECTION ================= -->
+            <!-- ====== Bio Section ====== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
                 android:orientation="vertical"
                 android:padding="16dp"
+                android:layout_marginBottom="20dp"
                 android:background="@drawable/card_background"
-                android:elevation="2dp">
+                android:elevation="4dp"
+                android:clipToOutline="true">
 
                 <TextView
                     android:id="@+id/tvBio"
@@ -184,17 +193,17 @@
                     android:textSize="12sp"
                     android:textColor="@color/text_gray"
                     android:layout_marginTop="4dp" />
-
             </LinearLayout>
 
-            <!-- ================= TABS ================= -->
+            <!-- ====== Tabs ====== -->
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:tabIndicatorColor="@color/colorPrimary"
                 app:tabSelectedTextColor="@color/colorPrimary"
-                app:tabTextColor="@color/text_gray" />
+                app:tabTextColor="@color/text_gray"
+                android:layout_marginBottom="8dp" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager"
