@@ -8,7 +8,8 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -16,7 +17,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- User Info Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -29,11 +29,11 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_marginEnd="20dp"
-                    android:scaleType="centerCrop"
                     android:background="@drawable/circle_white"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/ic_user" />
 
-                <!-- User Stats -->
+                <!-- Right Side -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
                         android:textColor="@color/text_dark"
                         android:layout_marginBottom="8dp" />
 
-                    <!-- Stats: Posts / Events / Area -->
+                    <!-- Stats -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -79,7 +79,6 @@
                                 android:text="Posts"
                                 android:textSize="14sp"
                                 android:textColor="@color/text_gray" />
-
                         </LinearLayout>
 
                         <LinearLayout
@@ -104,37 +103,11 @@
                                 android:text="Events"
                                 android:textSize="14sp"
                                 android:textColor="@color/text_gray" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center">
-
-                            <TextView
-                                android:id="@+id/tvNeighbourhood"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="--"
-                                android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/text_dark" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Area"
-                                android:textSize="14sp"
-                                android:textColor="@color/text_gray" />
-
                         </LinearLayout>
 
                     </LinearLayout>
 
-                    <!-- Action Buttons -->
+                    <!-- Buttons -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -144,11 +117,10 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnEditProfile"
                             android:layout_width="0dp"
-                            android:layout_height="40dp"
+                            android:layout_height="48dp"
                             android:layout_weight="1"
                             android:layout_marginEnd="4dp"
                             android:text="Edit Profile"
-                            android:textSize="14sp"
                             style="@style/Widget.Material3.Button.OutlinedButton"
                             app:strokeColor="@color/colorPrimary"
                             app:strokeWidth="1dp" />
@@ -156,27 +128,24 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnLogout"
                             android:layout_width="0dp"
-                            android:layout_height="40dp"
+                            android:layout_height="48dp"
                             android:layout_weight="1"
                             android:layout_marginStart="4dp"
                             android:text="Logout"
-                            android:textSize="14sp"
                             style="@style/Widget.Material3.Button.OutlinedButton"
                             app:strokeColor="@color/colorAccent"
                             app:strokeWidth="1dp" />
-
                     </LinearLayout>
 
                 </LinearLayout>
-
             </LinearLayout>
 
-            <!-- User Bio Section -->
+            <!-- ================= BIO SECTION ================= -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_marginBottom="20dp"
+                android:orientation="vertical"
                 android:padding="16dp"
                 android:background="@drawable/card_background"
                 android:elevation="2dp">
@@ -207,26 +176,32 @@
                     android:textSize="12sp"
                     android:textColor="@color/text_gray" />
 
+                <TextView
+                    android:id="@+id/tvNeighbourhood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Neighbourhood: Not specified"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_gray"
+                    android:layout_marginTop="4dp" />
+
             </LinearLayout>
 
-            <!-- TabLayout -->
+            <!-- ================= TABS ================= -->
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 app:tabIndicatorColor="@color/colorPrimary"
                 app:tabSelectedTextColor="@color/colorPrimary"
                 app:tabTextColor="@color/text_gray" />
 
-            <!-- ViewPager2 -->
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="400dp" />
 
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
