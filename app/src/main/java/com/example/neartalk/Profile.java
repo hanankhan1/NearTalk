@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -98,12 +99,37 @@ public class Profile extends AppCompatActivity {
             return;
         }
 
-        if (imageUri != null) {
-            uploadImageAndSaveProfile(name, email, neighbourhood, about);
-        } else {
-            saveProfileToFirestore(name, email, neighbourhood, about, "");
-        }
+        // Check for unique username
+        FirebaseFirestore.getInstance().collection("users")
+                .whereEqualTo("userName", name)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    boolean isUnique = true;
+
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        // If document exists and UID is different, username is taken
+                        if (!doc.getId().equals(auth.getUid())) {
+                            isUnique = false;
+                            break;
+                        }
+                    }
+
+                    if (!isUnique) {
+                        Snackbar.make(btnSave, "Username already taken, choose another", Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        // Username is unique, proceed to save profile
+                        if (imageUri != null) {
+                            uploadImageAndSaveProfile(name, email, neighbourhood, about);
+                        } else {
+                            saveProfileToFirestore(name, email, neighbourhood, about, "");
+                        }
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Snackbar.make(btnSave, "Error checking username uniqueness", Snackbar.LENGTH_LONG).show()
+                );
     }
+
 
     private void uploadImageAndSaveProfile(String name, String email, String neighbourhood, String about) {
         StorageReference storageRef = FirebaseStorage.getInstance()
