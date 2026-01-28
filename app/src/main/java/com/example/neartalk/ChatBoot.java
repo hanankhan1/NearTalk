@@ -46,7 +46,7 @@ public class ChatBoot extends AppCompatActivity {
     RequestQueue queue;
     ProgressDialog dialog;
 
-    private static final String API_KEY = "AIzaSyBDpdT7BN2Pr3LFg6I15Z7s3d2e1Gtco0I";
+    private static final String API_KEY = "AIzaSyDY7vCYw9LmBKlWtYzBfd_v3em2-dd8D5w";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
