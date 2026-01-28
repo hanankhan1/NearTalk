@@ -23,7 +23,7 @@ public class UserEventsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private TextView tvEmpty;
-    private EventAdapter adapter;
+    private UserEventAdapter adapter;
     private List<Event> eventList;
 
     private FirebaseUser currentUser;
@@ -39,7 +39,7 @@ public class UserEventsFragment extends Fragment {
         tvEmpty = view.findViewById(R.id.tvEmpty);
 
         eventList = new ArrayList<>();
-        adapter = new EventAdapter(eventList);
+        adapter = new UserEventAdapter(eventList);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
@@ -47,9 +47,10 @@ public class UserEventsFragment extends Fragment {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
 
-        adapter.setOnEventActionListener(new EventAdapter.OnEventActionListener() {
+        adapter.setOnUserEventActionListener(new UserEventAdapter.OnUserEventActionListener() {
             @Override
             public void onEdit(Event event) {
+                // Open AddEventFrgment with pre-filled event
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("event", event);
 
@@ -91,7 +92,7 @@ public class UserEventsFragment extends Fragment {
                     if (!query.isEmpty()) {
                         for (var doc : query.getDocuments()) {
                             Event event = doc.toObject(Event.class);
-                            event.setId(doc.getId()); // 🔥 CRITICAL
+                            event.setId(doc.getId());
                             eventList.add(event);
                         }
                         adapter.notifyDataSetChanged();

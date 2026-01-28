@@ -2,14 +2,13 @@ package com.example.neartalk;
 
 public class UserProfile {
 
-    private String userId; // Firebase UID
-    private String userName; // Added user name
+    private String userId;
+    private String userName;
     private String email;
     private String neighbourhood;
     private String about;
     private String profileImageUrl;
 
-    // No-argument constructor required for Firebase
     public UserProfile() {
     }
 
