@@ -41,19 +41,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostVH> {
         holder.tvName.setText(post.getUserName());
         holder.tvTitle.setText(post.getTitle());
         holder.tvDesc.setText(post.getDescription());
+        holder.tvLocation.setText(post.getNeighbourhood()+"."+getTimeAgo(post.getTimestamp()));
         holder.tvPrice.setText(post.getPrice().isEmpty() ? "" : "$" + post.getPrice());
         holder.tvStatus.setText(post.getType().toUpperCase());
 
         // Load profile image instead of showing text initials
         if (post.getUserProfileImage() != null && !post.getUserProfileImage().isEmpty()) {
-            // Show profile image
             Glide.with(context)
                     .load(post.getUserProfileImage())
                     .circleCrop() // Make it circular
-                    .placeholder(R.drawable.ic_user) // Default placeholder
+                    .placeholder(R.drawable.ic_user)
                     .into(holder.ivProfile);
-            holder.tvPic.setVisibility(View.GONE); // Hide the text view
-            holder.ivProfile.setVisibility(View.VISIBLE); // Show image view
+            holder.tvPic.setVisibility(View.GONE);
+            holder.ivProfile.setVisibility(View.VISIBLE);
         } else {
             // Fallback to text initials if no profile image
             holder.tvPic.setText(post.getUserName().isEmpty() ? "U" :
@@ -78,7 +78,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostVH> {
     }
 
     static class PostVH extends RecyclerView.ViewHolder {
-        TextView tvName, tvTitle, tvDesc, tvPrice, tvStatus, tvPic;
+        TextView tvName, tvTitle, tvDesc, tvPrice, tvStatus, tvPic, tvLocation;
         ImageView ivProfile; // Add ImageView for profile picture
         RecyclerView imageRecyclerView;
         Button btnMessage;
@@ -91,6 +91,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostVH> {
             tvPrice = itemView.findViewById(R.id.tvPrice);
             tvStatus = itemView.findViewById(R.id.tvStatus);
             tvPic = itemView.findViewById(R.id.tvPic);
+            tvLocation = itemView.findViewById(R.id.tvLocation);
             ivProfile = itemView.findViewById(R.id.ivProfile); // You need to add this in post_list.xml
             imageRecyclerView = itemView.findViewById(R.id.imageRecyclerView);
             btnMessage = itemView.findViewById(R.id.btnMessage);
@@ -137,4 +138,18 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostVH> {
             }
         }
     }
+    private String getTimeAgo(long time) {
+        long diff = System.currentTimeMillis() - time;
+
+        long seconds = diff / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+
+        if (days > 0) return days + "d ago";
+        if (hours > 0) return hours + "h ago";
+        if (minutes > 0) return minutes + "m ago";
+        return "Just now";
+    }
+
 }

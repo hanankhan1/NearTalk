@@ -1,5 +1,6 @@
 package com.example.neartalk;
 
+import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -47,6 +48,7 @@ public class AddPostFragment extends Fragment {
     private FirebaseAuth auth;
 
     private ActivityResultLauncher<String[]> imagePicker;
+    private ProgressDialog progressDialog;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -170,6 +172,7 @@ public class AddPostFragment extends Fragment {
         }
     }
 
+
     private void savePost() {
         if (getContext() == null || getActivity() == null) return;
 
@@ -179,89 +182,83 @@ public class AddPostFragment extends Fragment {
             return;
         }
 
-        // First, fetch the user's profile to get their name and profile image
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Creating post...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         db.collection("users").document(uid)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
+                    String userName = "";
+                    String userProfileImage = "";
+                    String neighbourhood = "";
+
                     if (documentSnapshot.exists()) {
                         UserProfile userProfile = documentSnapshot.toObject(UserProfile.class);
-
-                        String userName = userProfile != null ? userProfile.getUserName() : "";
-                        String userEmail = auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : "";
-                        String userProfileImage = userProfile != null ? userProfile.getProfileImageUrl() : "";
-
-                        // Use the userName from UserProfile, fallback to email if not available
-                        if (userName.isEmpty()) {
-                            userName = userEmail;
+                        if (userProfile != null) {
+                            userName = userProfile.getUserName();
+                            userProfileImage = userProfile.getProfileImageUrl();
+                            neighbourhood = userProfile.getNeighbourhood(); // ✅ Important
                         }
-
-                        // Create post with all required parameters including profile image
-                        Post post = new Post(
-                                null,
-                                uid,
-                                userName, // Use actual username from profile
-                                userProfileImage, // Add profile image URL
-                                selectedType,
-                                etTitle.getText().toString().trim(),
-                                etDescription.getText().toString().trim(),
-                                etPrice.getText().toString().trim(),
-                                new ArrayList<>(uploadedUrls),
-                                System.currentTimeMillis()
-                        );
-
-                        // Save to Firestore
-                        db.collection("posts")
-                                .add(post)
-                                .addOnSuccessListener(doc -> {
-                                    Toast.makeText(getContext(), "Post Created", Toast.LENGTH_SHORT).show();
-                                    getActivity().getSupportFragmentManager().popBackStack();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(getContext(), "Failed to create post: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                });
-                    } else {
-                        // User profile doesn't exist, create post with minimal info
-                        String userEmail = auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : "";
-
-                        Post post = new Post(
-                                null,
-                                uid,
-                                userEmail, // Use email as fallback
-                                "", // Empty profile image URL
-                                selectedType,
-                                etTitle.getText().toString().trim(),
-                                etDescription.getText().toString().trim(),
-                                etPrice.getText().toString().trim(),
-                                new ArrayList<>(uploadedUrls),
-                                System.currentTimeMillis()
-                        );
-
-                        db.collection("posts")
-                                .add(post)
-                                .addOnSuccessListener(doc -> {
-                                    Toast.makeText(getContext(), "Post Created", Toast.LENGTH_SHORT).show();
-                                    getActivity().getSupportFragmentManager().popBackStack();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(getContext(), "Failed to create post: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                });
                     }
-                })
-                .addOnFailureListener(e -> {
-                    // If we can't fetch user profile, create post with basic info
-                    String userEmail = auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : "";
 
+                    // Fallbacks
+                    if (userName.isEmpty()) {
+                        userName = auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : "Unknown";
+                    }
+                    if (userProfileImage == null) userProfileImage = "";
+                    if (neighbourhood == null) neighbourhood = "";
+
+                    // Create Post object
                     Post post = new Post(
                             null,
                             uid,
-                            userEmail, // Use email as fallback
-                            "", // Empty profile image URL
+                            userName,
+                            userProfileImage,
                             selectedType,
                             etTitle.getText().toString().trim(),
                             etDescription.getText().toString().trim(),
                             etPrice.getText().toString().trim(),
                             new ArrayList<>(uploadedUrls),
-                            System.currentTimeMillis()
+                            System.currentTimeMillis(),
+                            neighbourhood
+                    );
+
+                    // Save to Firestore
+                    db.collection("posts")
+                            .add(post)
+                            .addOnSuccessListener(doc -> {
+                                if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+                                Toast.makeText(getContext(), "Post Created", Toast.LENGTH_SHORT).show();
+                                getActivity().getSupportFragmentManager().popBackStack();
+                            })
+                            .addOnFailureListener(e -> {
+                                if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+                                Toast.makeText(getContext(), "Failed to create post: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    // Fallback if user profile can't be fetched
+                    if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
+
+                    // Use safe fallback values
+                    String userName = auth.getCurrentUser() != null ? auth.getCurrentUser().getEmail() : "Unknown";
+                    String userProfileImage = ""; // No profile image
+                    String neighbourhood = "";     // No neighbourhood
+
+                    Post post = new Post(
+                            null,
+                            uid,
+                            userName,
+                            userProfileImage,
+                            selectedType,
+                            etTitle.getText().toString().trim(),
+                            etDescription.getText().toString().trim(),
+                            etPrice.getText().toString().trim(),
+                            new ArrayList<>(uploadedUrls),
+                            System.currentTimeMillis(),
+                            neighbourhood
                     );
 
                     db.collection("posts")
@@ -275,4 +272,6 @@ public class AddPostFragment extends Fragment {
                             });
                 });
     }
+
+
 }

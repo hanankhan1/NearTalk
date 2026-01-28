@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -24,7 +25,8 @@ public class EventsFragment extends Fragment {
     private EventAdapter adapter;
     private List<Event> eventList;
     private FirebaseFirestore db;
-    private FloatingActionButton fabeventadd;
+    private FloatingActionButton fabAddEvent;
+    private FrameLayout loadingOverlay;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -32,14 +34,16 @@ public class EventsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_events, container, false);
         recyclerView = view.findViewById(R.id.eventRecyclerView);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         eventList = new ArrayList<>();
         adapter = new EventAdapter(eventList);
         recyclerView.setAdapter(adapter);
-        fabeventadd = view.findViewById(R.id.fabAddEvent);
-        fabeventadd.setOnClickListener(v ->
+
+        fabAddEvent = view.findViewById(R.id.fabAddEvent);
+        loadingOverlay = view.findViewById(R.id.loadingOverlayevent);
+
+        fabAddEvent.setOnClickListener(v ->
                 requireActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.fragment_container, new AddEventFrgment())
@@ -65,13 +69,15 @@ public class EventsFragment extends Fragment {
     }
 
     private void loadEvents() {
+        showLoading(true); // Show loading overlay
+
         db.collection("events")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
-                .addSnapshotListener((value, error) -> {
-                    if (error != null || value == null) return;
-
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
                     eventList.clear();
-                    for (DocumentSnapshot doc : value.getDocuments()) {
+
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         Event event = doc.toObject(Event.class);
                         if (event != null) {
                             event.setId(doc.getId());
@@ -97,7 +103,19 @@ public class EventsFragment extends Fragment {
                             eventList.add(event);
                         }
                     }
+
                     adapter.notifyDataSetChanged();
+                    showLoading(false); // Hide loading overlay
+                })
+                .addOnFailureListener(e -> {
+                    showLoading(false);
                 });
+    }
+
+    // Helper to show/hide loading overlay
+    private void showLoading(boolean show) {
+        if (loadingOverlay != null) {
+            loadingOverlay.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
     }
 }

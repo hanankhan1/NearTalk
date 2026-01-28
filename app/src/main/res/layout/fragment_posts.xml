@@ -33,10 +33,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/searchLayout"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="-6dp"
         android:paddingBottom="16dp" />
 
-    <!-- Floating Action Button -->
+    <!-- Floating Action Buttons -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabChatBot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/fabAddPost"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="18dp"
+        android:src="@drawable/chatbot"
+        android:contentDescription="Chat Bot"
+        app:tint="@android:color/white"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddPost"
         android:layout_width="wrap_content"
@@ -48,4 +60,22 @@
         android:src="@android:drawable/ic_input_add"
         android:contentDescription="Add Post"
         app:tint="@android:color/white"/>
+
+    <!-- Loading Overlay -->
+    <FrameLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone"
+        android:gravity="center">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:indeterminate="true"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
 </RelativeLayout>

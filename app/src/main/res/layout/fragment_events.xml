@@ -23,7 +23,8 @@
             android:hint="Search events"
             app:endIconMode="clear_text"
             app:boxBackgroundMode="outline"
-            android:padding="4dp">
+            android:padding="4dp"
+            android:background="@drawable/gradient_background">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etSearch"
@@ -58,5 +59,21 @@
         android:contentDescription="Add Event"
         android:src="@android:drawable/ic_input_add"
         app:tint="@android:color/white" />
+    <!-- Loading Overlay -->
+    <FrameLayout
+        android:id="@+id/loadingOverlayevent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone"
+        android:gravity="center">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:indeterminate="true"
+            android:layout_gravity="center"/>
+    </FrameLayout>
 
 </RelativeLayout>

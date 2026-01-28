@@ -13,29 +13,14 @@ public class Post {
     private String price;
     private List<String> imageUrls;
     private long timestamp;
+    private String neighbourhood;
 
     public Post() {}
 
-    // Constructor without userProfileImage (for backward compatibility)
-    public Post(String postId, String userId, String userName, String type,
-                String title, String description, String price,
-                List<String> imageUrls, long timestamp) {
-        this.postId = postId;
-        this.userId = userId;
-        this.userName = userName;
-        this.userProfileImage = ""; // Default empty
-        this.type = type;
-        this.title = title;
-        this.description = description;
-        this.price = price;
-        this.imageUrls = imageUrls;
-        this.timestamp = timestamp;
-    }
-
     // Full constructor with profile image
-    public Post(String postId, String userId, String userName, String userProfileImage, String type,
-                String title, String description, String price,
-                List<String> imageUrls, long timestamp) {
+
+
+    public Post(String postId, String userId, String userName, String userProfileImage, String type, String title, String description, String price, List<String> imageUrls, long timestamp, String neighbourhood) {
         this.postId = postId;
         this.userId = userId;
         this.userName = userName;
@@ -46,6 +31,7 @@ public class Post {
         this.price = price;
         this.imageUrls = imageUrls;
         this.timestamp = timestamp;
+        this.neighbourhood = neighbourhood;
     }
 
     public String getPostId() { return postId; }
@@ -65,5 +51,13 @@ public class Post {
     // 🔥 REQUIRED FOR DELETE
     public void setPostId(String postId) {
         this.postId = postId;
+    }
+
+    public String getNeighbourhood() {
+        return neighbourhood;
+    }
+
+    public void setNeighbourhood(String neighbourhood) {
+        this.neighbourhood = neighbourhood;
     }
 }
