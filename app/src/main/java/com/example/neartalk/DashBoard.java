@@ -3,6 +3,7 @@ package com.example.neartalk;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class DashBoard extends AppCompatActivity {
@@ -32,6 +33,8 @@ public class DashBoard extends AppCompatActivity {
                 selectedFragment = new GroupsFragment();
             } else if (item.getItemId() == R.id.nav_profile) {
                 selectedFragment = new ProfileFragment();
+            }else if (item.getItemId() == R.id.nav_search) {
+                selectedFragment = new UserSearch();
             }
 
             if (selectedFragment != null) {

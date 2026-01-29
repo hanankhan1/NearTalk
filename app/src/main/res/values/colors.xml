@@ -2,6 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <!-- Chat UI -->
+    <color name="chat_sent_bg">#16a34a</color> <!-- Your green -->
+    <color name="chat_received_bg">#E5E7EB</color> <!-- Light gray -->
+    <color name="chat_input_bg">#F9FAFB</color>
+    <color name="chat_hint">#9CA3AF</color>
 
 
     <!-- Primary Colors -->

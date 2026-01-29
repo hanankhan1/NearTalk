@@ -12,7 +12,6 @@ public class UserProfile {
     public UserProfile() {
     }
 
-    // Constructor with UID
     public UserProfile(String userId, String userName, String email, String neighbourhood, String about, String profileImageUrl) {
         this.userId = userId;
         this.userName = userName;

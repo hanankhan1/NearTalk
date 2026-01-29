@@ -9,6 +9,10 @@
         android:icon="@drawable/chat"
         android:title="Chats" />
     <item
+        android:id="@+id/nav_search"
+        android:icon="@drawable/search"
+        android:title="UserSearch" />
+    <item
         android:id="@+id/nav_events"
         android:icon="@drawable/events"
         android:title="Events" />
