@@ -43,7 +43,7 @@ public class UserSearch extends Fragment {
         recyclerUsers = view.findViewById(R.id.recyclerUsers);
 
         recyclerUsers.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new UserSearchAdapter(getContext(), userList);
+        adapter = new UserSearchAdapter(requireActivity(), userList);
         recyclerUsers.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();

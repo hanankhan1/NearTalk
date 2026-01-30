@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class DashBoard extends AppCompatActivity {
 
@@ -16,6 +19,14 @@ public class DashBoard extends AppCompatActivity {
         setContentView(R.layout.activity_dash_board);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        FirebaseMessaging.getInstance().getToken()
+                .addOnSuccessListener(token ->
+                        FirebaseFirestore.getInstance()
+                                .collection("users")
+                                .document(FirebaseAuth.getInstance().getUid())
+                                .update("fcmToken", token)
+                );
+
 
         // Default fragment
         loadFragment(new PostsFragment());
