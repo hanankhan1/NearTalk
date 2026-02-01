@@ -2,9 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permissions -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
 
     <application
         android:allowBackup="true"
@@ -13,29 +17,36 @@
         android:theme="@style/Theme.NearTalk"
         tools:targetApi="31">
 
-        <!-- FCM SERVICE -->
+        <!-- FCM service -->
         <service
             android:name=".MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
 
-        <activity
-            android:name=".activity_splash"
-            android:exported="true">
+        <!-- Reminder Service -->
+        <service
+            android:name=".MyService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback"/>
+
+        <!-- Stop alarm receiver -->
+        <receiver android:name=".MyReceiver" android:exported="false"/>
+
+        <!-- Activities -->
+        <activity android:name=".activity_splash" android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-        <activity android:name=".LoginActivity" android:exported="false" />
-        <activity android:name=".SignUp" android:exported="false" />
-        <activity android:name=".DashBoard" android:exported="true" />
-        <activity android:name=".Profile" android:exported="false" />
-        <activity android:name=".ChatBoot" android:exported="false" />
+        <activity android:name=".LoginActivity" android:exported="false"/>
+        <activity android:name=".SignUp" android:exported="false"/>
+        <activity android:name=".DashBoard" android:exported="true"/>
+        <activity android:name=".Profile" android:exported="false"/>
+        <activity android:name=".ChatBoot" android:exported="false"/>
         <activity android:name=".ChatActivity" android:exported="false"/>
 
     </application>

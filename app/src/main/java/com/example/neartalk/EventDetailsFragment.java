@@ -1,5 +1,11 @@
 package com.example.neartalk;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,14 +16,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class EventDetailsFragment extends Fragment {
@@ -67,9 +74,7 @@ public class EventDetailsFragment extends Fragment {
         }
 
         btnJoinEvent.setOnClickListener(v -> joinEvent());
-        btnSetReminder.setOnClickListener(v ->
-                Toast.makeText(getContext(), "Reminder Set!", Toast.LENGTH_SHORT).show()
-        );
+        btnSetReminder.setOnClickListener(v -> setReminder());
 
         return view;
     }
@@ -80,28 +85,22 @@ public class EventDetailsFragment extends Fragment {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DocumentReference docRef = db.collection("events").document(eventId);
 
-        docRef.get().addOnSuccessListener(documentSnapshot -> {
-            if (!documentSnapshot.exists()) return;
+        docRef.get().addOnSuccessListener(doc -> {
+            if (!doc.exists()) return;
 
-            String title = documentSnapshot.getString("title");
-            String category = documentSnapshot.getString("category");
-            String description = documentSnapshot.getString("description");
-            String date = documentSnapshot.getString("date");
-            String time = documentSnapshot.getString("time");
-            String location = documentSnapshot.getString("location");
-            String organizerId = documentSnapshot.getString("userId"); // fetch userId
-            Long attendees = documentSnapshot.getLong("attendees");
-            List<String> attendeesList = (List<String>) documentSnapshot.get("attendeesList");
-            if (attendeesList == null) attendeesList = new ArrayList<>();
+            // Deserialize Firestore document into Event object
+            Event event = doc.toObject(Event.class);
+            if (event == null) return;
 
-            tvTitle.setText(title);
-            tvCategory.setText(category);
-            tvDescription.setText(description);
-            tvDateTime.setText(date + " at " + time);
-            tvLocation.setText(location);
-            tvAttendees.setText(attendees != null ? attendees + " attending" : "0 attending");
+            tvTitle.setText(event.getTitle());
+            tvCategory.setText(event.getCategory());
+            tvDescription.setText(event.getDescription());
+            tvDateTime.setText(event.getDate() + " at " + event.getTime());
+            tvLocation.setText(event.getLocation());
+            tvAttendees.setText(event.getAttendees() + " attending");
 
-            // Fetch organizer name from Firestore
+            // Fetch organizer name
+            String organizerId = event.getUserId();
             if (organizerId != null) {
                 db.collection("users").document(organizerId)
                         .get()
@@ -117,7 +116,10 @@ public class EventDetailsFragment extends Fragment {
                 tvOrganizer.setText("Organized by User");
             }
 
-            // Disable join if user already joined
+            // Disable join button if already joined
+            List<String> attendeesList = (List<String>) doc.get("attendeesList");
+            if (attendeesList == null) attendeesList = new ArrayList<>();
+
             if (attendeesList.contains(currentUserId)) {
                 btnJoinEvent.setEnabled(false);
                 btnJoinEvent.setText("Joined");
@@ -130,7 +132,6 @@ public class EventDetailsFragment extends Fragment {
 
     private void joinEvent() {
         if (eventId == null) return;
-
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Toast.makeText(getContext(), "Please login first", Toast.LENGTH_SHORT).show();
             return;
@@ -140,14 +141,13 @@ public class EventDetailsFragment extends Fragment {
         DocumentReference docRef = db.collection("events").document(eventId);
 
         db.runTransaction(transaction -> {
-            DocumentSnapshot snapshot = transaction.get(docRef);
+            Event event = transaction.get(docRef).toObject(Event.class);
+            if (event == null) return "FAILED";
 
-            List<String> attendeesList = (List<String>) snapshot.get("attendeesList");
+            List<String> attendeesList = (List<String>) transaction.get(docRef).get("attendeesList");
             if (attendeesList == null) attendeesList = new ArrayList<>();
 
-            if (attendeesList.contains(currentUserId)) {
-                return "ALREADY_JOINED";
-            }
+            if (attendeesList.contains(currentUserId)) return "ALREADY_JOINED";
 
             attendeesList.add(currentUserId);
             transaction.update(docRef, "attendeesList", attendeesList);
@@ -157,7 +157,7 @@ public class EventDetailsFragment extends Fragment {
         }).addOnSuccessListener(result -> {
             if ("ALREADY_JOINED".equals(result)) {
                 Toast.makeText(getContext(), "You already joined this event!", Toast.LENGTH_SHORT).show();
-            } else {
+            } else if ("JOINED".equals(result)) {
                 Toast.makeText(getContext(), "You joined the event!", Toast.LENGTH_SHORT).show();
                 loadEventDetails();
             }
@@ -165,5 +165,104 @@ public class EventDetailsFragment extends Fragment {
                 Toast.makeText(getContext(), "Failed to join event.", Toast.LENGTH_SHORT).show()
         );
     }
+
+    private void setReminder() {
+        if (eventId == null) return;
+
+        db.collection("events").document(eventId).get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) return;
+
+                    Event event = doc.toObject(Event.class);
+                    if (event == null) return;
+
+                    String date = event.getDate();
+                    String time = event.getTime(); 
+                    String title = event.getTitle();
+                    if (title == null || title.isEmpty()) title = "Event Reminder";
+
+                    if (date == null || time == null) {
+                        Toast.makeText(getContext(), "Event date/time not set", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    try {
+                        // Parse Firestore date + time
+                        String dateTimeStr = date + " " + time; // "yyyy/MM/dd HH:mm"
+                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm", java.util.Locale.getDefault());
+                        java.util.Date eventDate = sdf.parse(dateTimeStr);
+
+                        if (eventDate == null) {
+                            Toast.makeText(getContext(), "Invalid event date/time", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(eventDate);
+
+                        long triggerTime = calendar.getTimeInMillis();
+
+                        // Handle same-day past events
+                        if (triggerTime < System.currentTimeMillis()) {
+                            // Fire immediately if same-day but past
+                            triggerTime = System.currentTimeMillis() + 1000; // 1 second later
+                            Toast.makeText(getContext(), "Event already started, reminder will trigger now", Toast.LENGTH_SHORT).show();
+                        }
+
+                        // Schedule reminder exactly at calculated triggerTime
+                        scheduleReminder(triggerTime, title);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "Failed to parse event date/time", Toast.LENGTH_SHORT).show();
+                    }
+
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(getContext(), "Failed to fetch event time", Toast.LENGTH_SHORT).show()
+                );
+    }
+
+
+    private void scheduleReminder(long triggerAtMillis, String eventTitle) {
+        Intent intent = new Intent(requireContext(), MyService.class);
+
+        // Unique requestCode per event
+        int requestCode = eventId.hashCode();
+
+        intent.putExtra("eventTitle", eventTitle);
+        intent.putExtra("requestCode", requestCode);
+
+        PendingIntent pendingIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            pendingIntent = PendingIntent.getForegroundService(
+                    requireContext(),
+                    requestCode,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+        } else {
+            pendingIntent = PendingIntent.getService(
+                    requireContext(),
+                    requestCode,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+        }
+
+        AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerAtMillis,
+                    pendingIntent
+            );
+            Toast.makeText(requireContext(), "Reminder set successfully!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(requireContext(), "Failed to access AlarmManager", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
 }

@@ -1,18 +1,21 @@
 package com.example.neartalk;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
@@ -62,14 +65,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostVH> {
             holder.ivProfile.setVisibility(View.GONE); // Hide image view
         }
 
-        // Horizontal images
+
         holder.imageRecyclerView.setLayoutManager(
                 new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         holder.imageRecyclerView.setAdapter(new ImageAdapter(context, post.getImageUrls()));
 
         holder.btnMessage.setOnClickListener(v -> {
-            // TODO: Open chat with seller
+            if (post.getUserId().equals(FirebaseAuth.getInstance().getUid())) {
+                Toast.makeText(context, "This is your own post", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(context, ChatActivity.class);
+            intent.putExtra("otherUserId", post.getUserId());
+            intent.putExtra("otherUsername", post.getUserName());
+            context.startActivity(intent);
         });
+
     }
 
     @Override

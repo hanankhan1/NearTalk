@@ -44,8 +44,6 @@ public class DashBoard extends AppCompatActivity {
                 selectedFragment = new GroupsFragment();
             } else if (item.getItemId() == R.id.nav_profile) {
                 selectedFragment = new ProfileFragment();
-            }else if (item.getItemId() == R.id.nav_search) {
-                selectedFragment = new UserSearch();
             }
 
             if (selectedFragment != null) {

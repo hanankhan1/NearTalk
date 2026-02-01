@@ -30,7 +30,6 @@ public class ChatActivity extends AppCompatActivity {
     private FirebaseFirestore db;
 
     private String otherUserId;
-    private String otherUserName;
     private String chatId;
 
     private List<Message> messageList = new ArrayList<>();
@@ -51,16 +50,7 @@ public class ChatActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         otherUserId = getIntent().getStringExtra("otherUserId");
-        otherUserName = getIntent().getStringExtra("otherUsername");
-
-        tvUserName.setText(otherUserName);
-
-        // Load profile image
-        db.collection("users").document(otherUserId).get()
-                .addOnSuccessListener(doc -> {
-                    String img = doc.getString("profileImageUrl");
-                    if (img != null) Glide.with(this).load(img).circleCrop().into(imgProfile);
-                });
+        if (otherUserId == null) finish();
 
         chatId = generateChatId(currentUser.getUid(), otherUserId);
 
@@ -68,15 +58,26 @@ public class ChatActivity extends AppCompatActivity {
         recyclerMessages.setLayoutManager(new LinearLayoutManager(this));
         recyclerMessages.setAdapter(adapter);
 
+        loadOtherUserInfo();
         loadMessages();
 
         btnSend.setOnClickListener(v -> {
             String msg = etMessage.getText().toString().trim();
-            if (!TextUtils.isEmpty(msg)) {
-                sendMessage(msg);
-                etMessage.setText("");
-            }
+            if (!TextUtils.isEmpty(msg)) sendMessage(msg);
+            etMessage.setText("");
         });
+    }
+
+    private void loadOtherUserInfo() {
+        db.collection("users").document(otherUserId).get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        tvUserName.setText(doc.getString("userName"));
+                        String url = doc.getString("profileImageUrl");
+                        if (url != null && !url.isEmpty())
+                            Glide.with(this).load(url).circleCrop().into(imgProfile);
+                    }
+                });
     }
 
     private String generateChatId(String u1, String u2) {
@@ -84,39 +85,34 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void loadMessages() {
-        db.collection("chats")
-                .document(chatId)
+        db.collection("user_chats").document(chatId)
                 .collection("messages")
                 .orderBy("timestamp")
                 .addSnapshotListener((snap, e) -> {
-                    if (e != null || snap == null) return;
+                    if (snap == null) return;
                     messageList.clear();
-                    for (DocumentSnapshot d : snap) {
-                        Message m = d.toObject(Message.class);
-                        if (m != null) messageList.add(m);
-                    }
+                    for (DocumentSnapshot d : snap.getDocuments())
+                        messageList.add(d.toObject(Message.class));
                     adapter.notifyDataSetChanged();
-                    recyclerMessages.scrollToPosition(messageList.size() - 1);
+                    if (!messageList.isEmpty())
+                        recyclerMessages.scrollToPosition(messageList.size() - 1);
                 });
     }
 
     private void sendMessage(String text) {
-        DocumentReference chatRef = db.collection("chats").document(chatId);
+        DocumentReference chatRef = db.collection("user_chats").document(chatId);
 
-        // Update last message & users in chat
         chatRef.set(new HashMap<String, Object>() {{
             put("users", Arrays.asList(currentUser.getUid(), otherUserId));
             put("lastMessage", text);
             put("lastTimestamp", System.currentTimeMillis());
         }}, SetOptions.merge());
 
-        // Add actual message
-        Map<String, Object> msg = new HashMap<>();
-        msg.put("senderId", currentUser.getUid());
-        msg.put("receiverId", otherUserId);
-        msg.put("text", text);
-        msg.put("timestamp", System.currentTimeMillis());
-
-        chatRef.collection("messages").add(msg);
+        chatRef.collection("messages").add(new HashMap<String, Object>() {{
+            put("senderId", currentUser.getUid());
+            put("receiverId", otherUserId);
+            put("text", text);
+            put("timestamp", System.currentTimeMillis());
+        }});
     }
 }

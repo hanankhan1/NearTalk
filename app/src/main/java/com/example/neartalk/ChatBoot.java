@@ -22,6 +22,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
@@ -46,7 +47,7 @@ public class ChatBoot extends AppCompatActivity {
     RequestQueue queue;
     ProgressDialog dialog;
 
-    private static final String API_KEY = "AIzaSyDY7vCYw9LmBKlWtYzBfd_v3em2-dd8D5w";
+    private static final String API_KEY = "AIzaSyCiqLl-inqGv4mReAaWMIkENqichzHnw7Q";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,17 +84,31 @@ public class ChatBoot extends AppCompatActivity {
     }
 
     private void loadOldChats() {
+
         db.collection("chats")
                 .orderBy("timestamp")
                 .addSnapshotListener((value, error) -> {
-                    if (value != null) {
-                        messages.clear();
-                        messages.addAll(value.toObjects(ChatBootMessage.class));
-                        adapter.notifyDataSetChanged();
+
+                    if (error != null || value == null) return;
+
+                    for (DocumentChange dc : value.getDocumentChanges()) {
+
+                        if (dc.getType() == DocumentChange.Type.ADDED) {
+
+                            ChatBootMessage msg =
+                                    dc.getDocument().toObject(ChatBootMessage.class);
+
+                            messages.add(msg);
+                            adapter.notifyItemInserted(messages.size() - 1);
+                        }
+                    }
+
+                    if (!messages.isEmpty()) {
                         chatRecycler.scrollToPosition(messages.size() - 1);
                     }
                 });
     }
+
 
     private void saveMessage(ChatBootMessage msg) {
         db.collection("chats").add(msg);
