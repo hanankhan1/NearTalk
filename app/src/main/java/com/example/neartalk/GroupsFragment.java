@@ -1,64 +1,137 @@
 package com.example.neartalk;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link GroupsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class GroupsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private FloatingActionButton fabAddGroup;
+    private RecyclerView rvGroups;
+    private MyGroupsAdapter adapter;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private final List<AreaGroup> groupList = new ArrayList<>();
+    private final List<AreaGroup> filteredList = new ArrayList<>();
 
-    public GroupsFragment() {
-        // Required empty public constructor
-    }
+    private FirebaseFirestore db;
+    private FirebaseAuth auth;
+    private TextInputEditText etSearch;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GroupsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static GroupsFragment newInstance(String param1, String param2) {
-        GroupsFragment fragment = new GroupsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(
+            @NonNull LayoutInflater inflater,
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_groups, container, false);
+
+        fabAddGroup = view.findViewById(R.id.fabAddGroup);
+        rvGroups = view.findViewById(R.id.rvGroups);
+        etSearch = view.findViewById(R.id.etSearch);
+
+        rvGroups.setLayoutManager(new LinearLayoutManager(requireContext()));
+        adapter = new MyGroupsAdapter(
+                requireContext(),
+                filteredList,
+                this::openGroupChat
+        );
+        rvGroups.setAdapter(adapter);
+
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+
+        listenForMyGroups();
+
+        fabAddGroup.setOnClickListener(v ->
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new AddGroupFragment())
+                        .addToBackStack(null)
+                        .commit()
+        );
+
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
+            @Override public void afterTextChanged(Editable s) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterGroups(s.toString());
+            }
+        });
+
+        return view;
+    }
+
+    private void listenForMyGroups() {
+        String uid = auth.getUid();
+        if (uid == null) return;
+
+        db.collection("areaGroups")
+                .whereArrayContains("members", uid)
+                .orderBy("lastMessageTime")
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null || snapshots == null) return;
+
+                    groupList.clear();
+
+                    for (QueryDocumentSnapshot doc : snapshots) {
+                        AreaGroup g = doc.toObject(AreaGroup.class);
+                        g.setId(doc.getId());
+                        groupList.add(g);
+                    }
+
+                    filteredList.clear();
+                    filteredList.addAll(groupList);
+                    adapter.notifyDataSetChanged();
+
+                });
+    }
+
+    private void filterGroups(String query) {
+        query = query.toLowerCase();
+        filteredList.clear();
+
+        for (AreaGroup g : groupList) {
+            if (g.getAreaName().toLowerCase().contains(query)) {
+                filteredList.add(g);
+            }
         }
+        adapter.notifyDataSetChanged();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_groups, container, false);
+    private void openGroupChat(AreaGroup group) {
+        GroupChatFragment fragment = new GroupChatFragment();
+        Bundle b = new Bundle();
+        b.putString("groupId", group.getId());
+        b.putString("groupName", group.getAreaName());
+        fragment.setArguments(b);
+
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
+

@@ -48,21 +48,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostVH> {
         holder.tvPrice.setText(post.getPrice().isEmpty() ? "" : "$" + post.getPrice());
         holder.tvStatus.setText(post.getType().toUpperCase());
 
-        // Load profile image instead of showing text initials
         if (post.getUserProfileImage() != null && !post.getUserProfileImage().isEmpty()) {
             Glide.with(context)
                     .load(post.getUserProfileImage())
-                    .circleCrop() // Make it circular
+                    .circleCrop()
                     .placeholder(R.drawable.ic_user)
                     .into(holder.ivProfile);
             holder.tvPic.setVisibility(View.GONE);
             holder.ivProfile.setVisibility(View.VISIBLE);
         } else {
-            // Fallback to text initials if no profile image
             holder.tvPic.setText(post.getUserName().isEmpty() ? "U" :
                     post.getUserName().substring(0,1).toUpperCase());
-            holder.tvPic.setVisibility(View.VISIBLE); // Show text view
-            holder.ivProfile.setVisibility(View.GONE); // Hide image view
+            holder.tvPic.setVisibility(View.VISIBLE);
+            holder.ivProfile.setVisibility(View.GONE);
         }
 
 
@@ -90,7 +88,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostVH> {
 
     static class PostVH extends RecyclerView.ViewHolder {
         TextView tvName, tvTitle, tvDesc, tvPrice, tvStatus, tvPic, tvLocation;
-        ImageView ivProfile; // Add ImageView for profile picture
+        ImageView ivProfile;
         RecyclerView imageRecyclerView;
         Button btnMessage;
 
@@ -103,13 +101,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostVH> {
             tvStatus = itemView.findViewById(R.id.tvStatus);
             tvPic = itemView.findViewById(R.id.tvPic);
             tvLocation = itemView.findViewById(R.id.tvLocation);
-            ivProfile = itemView.findViewById(R.id.ivProfile); // You need to add this in post_list.xml
+            ivProfile = itemView.findViewById(R.id.ivProfile);
             imageRecyclerView = itemView.findViewById(R.id.imageRecyclerView);
             btnMessage = itemView.findViewById(R.id.btnMessage);
         }
     }
-
-    // ---------------- IMAGE ADAPTER ----------------
     public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageVH> {
         private final List<String> images;
         private final Context context;

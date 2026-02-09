@@ -90,7 +90,7 @@ public class UserEventAdapter extends RecyclerView.Adapter<UserEventAdapter.User
                                         ContextMenu.ContextMenuInfo menuInfo) {
 
             MenuInflater inflater = new MenuInflater(v.getContext());
-            inflater.inflate(R.menu.event_context_menu, menu); // your XML menu
+            inflater.inflate(R.menu.event_context_menu, menu);
 
             menu.findItem(R.id.menu_edit).setOnMenuItemClickListener(item -> {
                 if (listener != null) listener.onEdit(currentEvent);

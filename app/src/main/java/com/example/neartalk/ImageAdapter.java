@@ -43,7 +43,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageVH>{
         return images.size();
     }
 
-    // ViewHolder
     class ImageVH extends RecyclerView.ViewHolder {
         ImageView imageView;
         public ImageVH(@NonNull View itemView) {

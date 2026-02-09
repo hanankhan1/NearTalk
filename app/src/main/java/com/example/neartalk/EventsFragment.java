@@ -53,7 +53,6 @@ public class EventsFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
 
-        // Click listener for opening EventDetailsFragment
         adapter.setOnEventClickListener(event -> {
             EventDetailsFragment fragment = EventDetailsFragment.newInstance(event.getId());
             requireActivity().getSupportFragmentManager()
@@ -69,7 +68,7 @@ public class EventsFragment extends Fragment {
     }
 
     private void loadEvents() {
-        showLoading(true); // Show loading overlay
+        showLoading(true);
 
         db.collection("events")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -85,7 +84,6 @@ public class EventsFragment extends Fragment {
                             Long attendees = doc.getLong("attendees");
                             event.setAttendees(attendees != null ? attendees : 0);
 
-                            // Fetch organizer name
                             String userId = event.getUserId();
                             if (userId != null) {
                                 db.collection("users")
@@ -105,14 +103,13 @@ public class EventsFragment extends Fragment {
                     }
 
                     adapter.notifyDataSetChanged();
-                    showLoading(false); // Hide loading overlay
+                    showLoading(false);
                 })
                 .addOnFailureListener(e -> {
                     showLoading(false);
                 });
     }
 
-    // Helper to show/hide loading overlay
     private void showLoading(boolean show) {
         if (loadingOverlay != null) {
             loadingOverlay.setVisibility(show ? View.VISIBLE : View.GONE);

@@ -21,18 +21,18 @@ public class activity_splash extends AppCompatActivity {
         ImageView logo = findViewById(R.id.ivLogo);
         TextView text = findViewById(R.id.tvAppName);
 
-        // Load animations
+
         Animation zoomOut = AnimationUtils.loadAnimation(this, R.anim.zoom_out);
         Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 
-        // Start animations
+
         logo.startAnimation(zoomOut);
         text.startAnimation(fadeOut);
 
-        // Delay and move to LoginActivity
+
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             startActivity(new Intent(activity_splash.this, LoginActivity.class));
             finish();
-        }, 1500); // matches animation duration
+        }, 1500);
     }
 }

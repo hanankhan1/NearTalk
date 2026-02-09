@@ -22,6 +22,6 @@ public class ProfilePagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 2; // Two tabs: Posts and Events
+        return 2;
     }
 }

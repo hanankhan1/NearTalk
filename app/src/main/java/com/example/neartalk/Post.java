@@ -17,9 +17,6 @@ public class Post {
 
     public Post() {}
 
-    // Full constructor with profile image
-
-
     public Post(String postId, String userId, String userName, String userProfileImage, String type, String title, String description, String price, List<String> imageUrls, long timestamp, String neighbourhood) {
         this.postId = postId;
         this.userId = userId;
@@ -48,7 +45,6 @@ public class Post {
     public void setUserProfileImage(String userProfileImage) {
         this.userProfileImage = userProfileImage;
     }
-    // 🔥 REQUIRED FOR DELETE
     public void setPostId(String postId) {
         this.postId = postId;
     }

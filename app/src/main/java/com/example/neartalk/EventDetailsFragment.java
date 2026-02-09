@@ -54,7 +54,6 @@ public class EventDetailsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_event_details, container, false);
 
-        // Views
         tvTitle = view.findViewById(R.id.tvEventTitle);
         tvCategory = view.findViewById(R.id.tvEventCategory);
         tvDescription = view.findViewById(R.id.tvEventDescription);
@@ -165,7 +164,7 @@ public class EventDetailsFragment extends Fragment {
                 Toast.makeText(getContext(), "Failed to join event.", Toast.LENGTH_SHORT).show()
         );
     }
-
+// foreground is here
     private void setReminder() {
         if (eventId == null) return;
 
@@ -187,8 +186,8 @@ public class EventDetailsFragment extends Fragment {
                     }
 
                     try {
-                        // Parse Firestore date + time
-                        String dateTimeStr = date + " " + time; // "yyyy/MM/dd HH:mm"
+
+                        String dateTimeStr = date + " " + time;
                         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm", java.util.Locale.getDefault());
                         java.util.Date eventDate = sdf.parse(dateTimeStr);
 
@@ -202,14 +201,12 @@ public class EventDetailsFragment extends Fragment {
 
                         long triggerTime = calendar.getTimeInMillis();
 
-                        // Handle same-day past events
                         if (triggerTime < System.currentTimeMillis()) {
-                            // Fire immediately if same-day but past
-                            triggerTime = System.currentTimeMillis() + 1000; // 1 second later
+
+                            triggerTime = System.currentTimeMillis() + 1000;
                             Toast.makeText(getContext(), "Event already started, reminder will trigger now", Toast.LENGTH_SHORT).show();
                         }
 
-                        // Schedule reminder exactly at calculated triggerTime
                         scheduleReminder(triggerTime, title);
 
                     } catch (Exception e) {
@@ -227,7 +224,6 @@ public class EventDetailsFragment extends Fragment {
     private void scheduleReminder(long triggerAtMillis, String eventTitle) {
         Intent intent = new Intent(requireContext(), MyService.class);
 
-        // Unique requestCode per event
         int requestCode = eventId.hashCode();
 
         intent.putExtra("eventTitle", eventTitle);

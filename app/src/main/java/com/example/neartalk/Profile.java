@@ -20,6 +20,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class Profile extends AppCompatActivity {
 
     private ImageView imgProfile;
@@ -37,30 +42,27 @@ public class Profile extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Check if user is logged in
         if (auth.getCurrentUser() == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
 
-        // Check if profile already exists in Firestore
         db.collection("users").document(auth.getUid())
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        // Profile exists, skip setup
+
                         startActivity(new Intent(this, DashBoard.class));
                         finish();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // Optional: handle errors
+
                 });
 
-        // Initialize views
         imgProfile = findViewById(R.id.imgProfile);
-        etName = findViewById(R.id.etName); // Name field
+        etName = findViewById(R.id.etName);
         etEmail = findViewById(R.id.etEmail);
         etNeighbourhood = findViewById(R.id.etNeighbourhood);
         etAbout = findViewById(R.id.etAbout);
@@ -69,7 +71,6 @@ public class Profile extends AppCompatActivity {
 
         etEmail.setText(auth.getCurrentUser().getEmail());
 
-        // Image picker for profile
         ActivityResultLauncher<String> imagePicker =
                 registerForActivityResult(new ActivityResultContracts.GetContent(),
                         uri -> {
@@ -99,7 +100,6 @@ public class Profile extends AppCompatActivity {
             return;
         }
 
-        // Check for unique username
         FirebaseFirestore.getInstance().collection("users")
                 .whereEqualTo("userName", name)
                 .get()
@@ -107,7 +107,6 @@ public class Profile extends AppCompatActivity {
                     boolean isUnique = true;
 
                     for (DocumentSnapshot doc : querySnapshot) {
-                        // If document exists and UID is different, username is taken
                         if (!doc.getId().equals(auth.getUid())) {
                             isUnique = false;
                             break;
@@ -117,7 +116,6 @@ public class Profile extends AppCompatActivity {
                     if (!isUnique) {
                         Snackbar.make(btnSave, "Username already taken, choose another", Snackbar.LENGTH_SHORT).show();
                     } else {
-                        // Username is unique, proceed to save profile
                         if (imageUri != null) {
                             uploadImageAndSaveProfile(name, email, neighbourhood, about);
                         } else {
@@ -152,10 +150,10 @@ public class Profile extends AppCompatActivity {
 
     private void saveProfileToFirestore(String name, String email, String neighbourhood,
                                         String about, String imageUrl) {
-        String uid = auth.getUid(); // get current user UID
+        String uid = auth.getUid();
         UserProfile userProfile = new UserProfile(
-                uid,        // UID
-                name,       // Name
+                uid,
+                name,
                 email,
                 neighbourhood,
                 about,
@@ -167,10 +165,54 @@ public class Profile extends AppCompatActivity {
                 .set(userProfile)
                 .addOnSuccessListener(unused -> {
                     Snackbar.make(btnSave, "Profile saved successfully", Snackbar.LENGTH_LONG).show();
+                    createAreaGroupIfNotExists(neighbourhood);
                     startActivity(new Intent(this, DashBoard.class));
                     finish();
                 })
                 .addOnFailureListener(e ->
                         Snackbar.make(btnSave, "Failed to save profile", Snackbar.LENGTH_LONG).show());
     }
+    private String normalizeArea(String area) {
+        return area.trim().toLowerCase().replaceAll("\\s+", "_");
+    }
+    private void createAreaGroupIfNotExists(String neighbourhood) {
+        if (TextUtils.isEmpty(neighbourhood)) return;
+
+        String areaId = normalizeArea(neighbourhood);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String uid = auth.getUid();
+
+        db.collection("areaGroups").document(areaId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) {
+                        List<String> initialMembers = new ArrayList<>();
+                        initialMembers.add(uid);
+
+                        AreaGroup newGroup = new AreaGroup(
+                                areaId,
+                                neighbourhood,
+                                System.currentTimeMillis(),
+                                1,
+                                initialMembers,
+                                "",
+                                0L,
+                                ""
+                        );
+
+                        db.collection("areaGroups").document(areaId)
+                                .set(newGroup)
+                                .addOnSuccessListener(aVoid ->
+                                        Snackbar.make(btnSave, "Area group created: " + neighbourhood, Snackbar.LENGTH_SHORT).show()
+                                )
+                                .addOnFailureListener(e ->
+                                        Snackbar.make(btnSave, "Failed to create area group", Snackbar.LENGTH_SHORT).show()
+                                );
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Snackbar.make(btnSave, "Error checking group existence", Snackbar.LENGTH_SHORT).show()
+                );
+    }
+
 }

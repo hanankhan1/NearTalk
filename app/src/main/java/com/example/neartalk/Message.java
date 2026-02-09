@@ -8,7 +8,6 @@ public class Message {
 
     public Message() {}
 
-    // Add setters
     public void setSenderId(String senderId) { this.senderId = senderId; }
     public void setReceiverId(String receiverId) { this.receiverId = receiverId; }
     public void setText(String text) { this.text = text; }

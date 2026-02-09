@@ -99,7 +99,6 @@ public class PostsFragment extends Fragment {
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Post post = doc.toObject(Post.class);
 
-                        // Fetch user profile to get profile image
                         firestore.collection("users")
                                 .document(post.getUserId())
                                 .get()
@@ -130,24 +129,21 @@ public class PostsFragment extends Fragment {
     }
 
     private void updateFilterButtons() {
-        filterLayout.removeAllViews(); // Clear old buttons
+        filterLayout.removeAllViews();
 
-        // Count types of posts created today
         Map<String, Integer> typeCount = new HashMap<>();
         long startOfDay = getStartOfDayInMillis();
 
         for (Post post : postList) {
-            if (post.getTimestamp() >= startOfDay) { // Only today
+            if (post.getTimestamp() >= startOfDay) {
                 String type = post.getType();
                 typeCount.put(type, typeCount.getOrDefault(type, 0) + 1);
             }
         }
 
-        // Sort by frequency
         List<Map.Entry<String, Integer>> sortedList = new ArrayList<>(typeCount.entrySet());
         sortedList.sort((a, b) -> b.getValue() - a.getValue());
 
-        // Take top 2 types
         int maxButtons = Math.min(2, sortedList.size());
         for (int i = 0; i < maxButtons; i++) {
             String type = sortedList.get(i).getKey();
@@ -155,22 +151,20 @@ public class PostsFragment extends Fragment {
 
             androidx.appcompat.widget.AppCompatButton btn = new androidx.appcompat.widget.AppCompatButton(requireContext());
             btn.setText(type + " (" + count + ")");
-            btn.setTextColor(getResources().getColor(R.color.chat_sent_bg)); // green text
+            btn.setTextColor(getResources().getColor(R.color.chat_sent_bg));
             btn.setAllCaps(false);
             btn.setPadding(32, 16, 32, 16);
             btn.setTextSize(14f);
 
-            // Create white background with rounded corners
+
             GradientDrawable drawable = new GradientDrawable();
-            drawable.setColor(getResources().getColor(android.R.color.white)); // white bg
-            drawable.setCornerRadius(24f); // rounded corners
-            drawable.setStroke(2, getResources().getColor(R.color.chat_sent_bg)); // green border
+            drawable.setColor(getResources().getColor(android.R.color.white));
+            drawable.setCornerRadius(24f);
+            drawable.setStroke(2, getResources().getColor(R.color.chat_sent_bg));
             btn.setBackground(drawable);
 
-            // Click to filter
             btn.setOnClickListener(v -> filterPostsByType(type));
 
-            // Add margin between buttons
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -183,7 +177,6 @@ public class PostsFragment extends Fragment {
     }
 
 
-    // Helper: get start of today in milliseconds
     private long getStartOfDayInMillis() {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -193,7 +186,6 @@ public class PostsFragment extends Fragment {
         return cal.getTimeInMillis();
     }
 
-    // Filter method
     private void filterPostsByType(String type) {
         filteredList.clear();
         for (Post post : postList) {
@@ -219,7 +211,6 @@ public class PostsFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    // Helper method to show/hide loading overlay
     private void showLoading(boolean show) {
         if (loadingOverlay != null) {
             loadingOverlay.setVisibility(show ? View.VISIBLE : View.GONE);

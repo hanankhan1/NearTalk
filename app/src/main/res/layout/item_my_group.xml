@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="3dp">
+
+    <LinearLayout
+        android:padding="12dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Group Image -->
+        <ImageView
+            android:id="@+id/imgGroup"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/group"
+            android:scaleType="centerCrop"
+            app:tint="@color/colorPrimary" />
+
+        <!-- Name + Last Message -->
+        <LinearLayout
+            android:layout_marginStart="12dp"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvGroupName"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Model Town"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvLastMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last message here..."
+                android:textSize="13sp"
+                android:textColor="#777"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+        </LinearLayout>
+
+        <!-- Time -->
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10:42 AM"
+            android:textSize="12sp"
+            android:textColor="#777"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -50,10 +50,8 @@ public class UserEventsFragment extends Fragment {
         adapter.setOnUserEventActionListener(new UserEventAdapter.OnUserEventActionListener() {
             @Override
             public void onEdit(Event event) {
-                // Open AddEventFrgment with pre-filled event
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("event", event);
-
                 AddEventFrgment fragment = new AddEventFrgment();
                 fragment.setArguments(bundle);
 

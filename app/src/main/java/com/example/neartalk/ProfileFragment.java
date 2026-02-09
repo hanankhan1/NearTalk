@@ -117,32 +117,21 @@ public class ProfileFragment extends Fragment {
                         String neighbourhood = getFieldValue(documentSnapshot, "neighbourhood", "neighborhood", "locality");
                         String profileImageUrl = getFieldValue(documentSnapshot, "profileImageUrl", "photoUrl", "imageUrl");
 
-                        // Update UI with data
                         tvUsername.setText(!TextUtils.isEmpty(username) ? username : "Username");
                         tvEmail.setText(!TextUtils.isEmpty(email) ? "Email: " + email : "Email: Not specified");
 
-                        // Handle bio/about section
                         if (!TextUtils.isEmpty(about)) {
                             tvBio.setText(about);
                         } else {
                             tvBio.setText("Bio section will appear here...");
                         }
 
-                        // Handle location
-                        if (!TextUtils.isEmpty(location)) {
-                            tvLocation.setText("Location: " + location);
-                        } else {
-                            tvLocation.setText("Location: Not specified");
-                        }
-
-                        // Handle neighbourhood (this is the one in the stats area)
                         if (!TextUtils.isEmpty(neighbourhood)) {
                             tvNeighbourhood.setText(neighbourhood);
                         } else {
                             tvNeighbourhood.setText("--");
                         }
 
-                        // Load profile image
                         if (!TextUtils.isEmpty(profileImageUrl)) {
                             Glide.with(requireContext())
                                     .load(profileImageUrl)
@@ -153,7 +142,6 @@ public class ProfileFragment extends Fragment {
                             ivProfilePicture.setImageResource(R.drawable.ic_user);
                         }
                     } else {
-                        // Create default profile if document doesn't exist
                         createDefaultProfile();
                     }
                 })
@@ -162,7 +150,6 @@ public class ProfileFragment extends Fragment {
                 });
     }
 
-    // Helper method to get field value with multiple possible field names
     private String getFieldValue(DocumentSnapshot documentSnapshot, String... fieldNames) {
         for (String fieldName : fieldNames) {
             String value = documentSnapshot.getString(fieldName);
@@ -178,7 +165,6 @@ public class ProfileFragment extends Fragment {
 
         String userId = currentUser.getUid();
 
-        // Load post count
         db.collection("posts")
                 .whereEqualTo("userId", userId)
                 .get()
@@ -189,7 +175,6 @@ public class ProfileFragment extends Fragment {
                     tvPostCount.setText("0");
                 });
 
-        // Load event count
         db.collection("events")
                 .whereEqualTo("userId", userId)
                 .get()
@@ -252,7 +237,6 @@ public class ProfileFragment extends Fragment {
         String newNeighbourhood = etEditNeighbourhood.getText().toString().trim();
         String newAbout = etEditAbout.getText().toString().trim();
 
-        // Validation
         if (TextUtils.isEmpty(newName)) {
             Toast.makeText(getContext(), "Name is required", Toast.LENGTH_SHORT).show();
             return;
@@ -263,8 +247,7 @@ public class ProfileFragment extends Fragment {
             return;
         }
 
-        // Check word count for about/bio (max 150 words)
-        if (!TextUtils.isEmpty(newAbout)) {
+                if (!TextUtils.isEmpty(newAbout)) {
             String[] words = newAbout.split("\\s+");
             if (words.length > 150) {
                 Toast.makeText(getContext(), "About section exceeds 150 words", Toast.LENGTH_SHORT).show();
@@ -281,7 +264,6 @@ public class ProfileFragment extends Fragment {
             }
         }
 
-        // Update UI immediately
         tvUsername.setText(newName);
         tvNeighbourhood.setText(newNeighbourhood);
         tvBio.setText(TextUtils.isEmpty(newAbout) ? "Bio section will appear here..." : newAbout);
@@ -293,13 +275,12 @@ public class ProfileFragment extends Fragment {
     private void updateProfileInFirestore(String name, String about, String location, String neighbourhood) {
         if (currentUser == null) return;
 
-        // Create update map
         Map<String, Object> updates = new HashMap<>();
         updates.put("userName", name);
         updates.put("about", about);
         updates.put("location", location);
         updates.put("neighbourhood", neighbourhood);
-        updates.put("email", currentUser.getEmail()); // Keep email updated
+        updates.put("email", currentUser.getEmail());
 
         db.collection("users").document(currentUser.getUid())
                 .update(updates)
@@ -320,7 +301,6 @@ public class ProfileFragment extends Fragment {
     private void uploadProfilePicture() {
         if (imageUri == null || currentUser == null) return;
 
-        // Show loading
         Toast.makeText(getContext(), "Uploading image...", Toast.LENGTH_SHORT).show();
 
         StorageReference storageRef = FirebaseStorage.getInstance()
@@ -329,11 +309,11 @@ public class ProfileFragment extends Fragment {
         storageRef.putFile(imageUri)
                 .addOnSuccessListener(taskSnapshot ->
                         storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            // Update Firestore with new image URL
+
                             db.collection("users").document(currentUser.getUid())
                                     .update("profileImageUrl", uri.toString())
                                     .addOnSuccessListener(unused -> {
-                                        // Update ImageView with new image
+
                                         Glide.with(requireContext())
                                                 .load(uri.toString())
                                                 .placeholder(R.drawable.ic_user)
@@ -354,7 +334,6 @@ public class ProfileFragment extends Fragment {
     private void createDefaultProfile() {
         if (currentUser == null) return;
 
-        // Create a default user profile
         Map<String, Object> defaultProfile = new HashMap<>();
         defaultProfile.put("userName", currentUser.getDisplayName() != null ?
                 currentUser.getDisplayName() : "New User");
@@ -368,7 +347,6 @@ public class ProfileFragment extends Fragment {
         db.collection("users").document(currentUser.getUid())
                 .set(defaultProfile)
                 .addOnSuccessListener(unused -> {
-                    // Reload profile after creation
                     loadUserProfile();
                 })
                 .addOnFailureListener(e -> {

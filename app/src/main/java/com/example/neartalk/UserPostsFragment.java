@@ -36,7 +36,7 @@ public class UserPostsFragment extends Fragment {
     ) {
         View view = inflater.inflate(R.layout.fragment_user_posts, container, false);
 
-        recyclerView = view.findViewById(R.id.recyclerPosts); // ✅ FIXED ID
+        recyclerView = view.findViewById(R.id.recyclerPosts);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adapter = new ProfilePostAdapter(postList);
@@ -63,7 +63,7 @@ public class UserPostsFragment extends Fragment {
 
                     for (QueryDocumentSnapshot doc : query) {
                         Post post = doc.toObject(Post.class);
-                        post.setPostId(doc.getId()); // ✅ REQUIRED
+                        post.setPostId(doc.getId());
                         postList.add(post);
                     }
 

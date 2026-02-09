@@ -21,7 +21,6 @@ public class UserProfile {
         this.profileImageUrl = profileImageUrl;
     }
 
-    // GETTERS
     public String getUserId() { return userId; }
     public String getUserName() { return userName; }
     public String getEmail() { return email; }
@@ -29,7 +28,6 @@ public class UserProfile {
     public String getAbout() { return about; }
     public String getProfileImageUrl() { return profileImageUrl; }
 
-    // SETTERS
     public void setUserId(String userId) { this.userId = userId; }
     public void setUserName(String userName) { this.userName = userName; }
     public void setEmail(String email) { this.email = email; }

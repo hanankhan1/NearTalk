@@ -53,7 +53,6 @@ public class MyService extends Service {
 
         playAlarm();
 
-        // Auto-stop after 2 minutes (optional)
         new Handler().postDelayed(this::stopSelf, 120000);
 
         return START_NOT_STICKY;
